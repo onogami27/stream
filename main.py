@@ -1,0 +1,4 @@
+import sisaku
+
+
+sisaku.rand()
