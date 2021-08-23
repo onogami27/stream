@@ -35,7 +35,7 @@ df_map = pd.DataFrame(
 st.map(df_map)
 
 #画像を表示
-img = Image.open(r"C:\Users\onoga\OneDrive\Desktop\MyDocker\venvs\ttt\iiiiii.jpg")
+img = Image.open(r"C:\Users\60837\Desktop\Mypython\Git\stream\iiiiii.jpg")
 st.image(img, caption = "グラフ", use_column_width = True)
 
 #インタラクティブウィジェット
