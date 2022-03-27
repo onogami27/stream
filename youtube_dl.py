@@ -1,9 +1,10 @@
 import streamlit as st
 from pytube import YouTube
 import os 
+import shutil
 
-
-
+#カレントディレクトリpathを取得
+cwd = os.getcwd()
 
 
 #動画タイトルを取得
@@ -26,17 +27,31 @@ def tube_gaiyou(URL):
     mystream = YouTube(url=URL).description
     return mystream
 
-def event():
-    st.success("aaaa")
-    st.success("s")
-def eee():
-    for i in tube_in(r"https://www.youtube.com/watch?v=EkifUgWUk1w&list=RDZCOa3YY1MLc&index=2"):
-        st.checkbox("{}".format(i))
+#mp4形式で動画をダウンロード
+def dl_mp4(url):
+    mystream = YouTube(url = url)
+    st.text_input(label="動画タイトル",value=tube_title(url))
+    mystream_mp4 = mystream.streams.filter(progressive=True, res="720p",file_extension="mp4").get_highest_resolution()
+    out_file_mp4 = mystream_mp4.download("mp4")
+    out_file_name_mp4 = os.path.split("{}".format(out_file_mp4))[1]
+    #ダウンロードする
+    with open(out_file_mp4,"rb") as mp4:
+        dl_bt_mp4 = st.download_button(label="動画のダウンロード",data=mp4,file_name=out_file_name_mp4)
+    shutil.rmtree("mp4")          
 
+#音声ファイルをダウンロード
+def dl_audio(url):
+    mystream = YouTube(url = url)
+    mystream_audio = mystream.streams.filter(type="audio",mime_type="audio/mp4").first()
+    out_file_audio = mystream_audio.download("audio")
+    out_file_name_audio = os.path.split("{}".format(out_file_audio))[1]
+    with open(out_file_audio,"rb") as audio:
+        dl_bt_audio = st.download_button(label="音声のみダウンロード",data=audio,file_name=out_file_name_audio)
+    shutil.rmtree("audio")
 
-
+#ページタイトルを記載
 st.title("YOUTUBE動画ダウンローダー")
-dl_bt = st.download_button("ds","",disabled=True)
+
 
 url = st.text_input("動画URLを入力")
 
@@ -48,18 +63,24 @@ if start:
         st.warning("動画URLを入力してください")
         pass
     else:
-        
-        mystream = YouTube(url = url)
-        mystream = mystream.streams.filter(progressive=True, res="720p",file_extension="mp4").get_highest_resolution()
-        global out_file
-        out_file = mystream.download()
-        out_file_name = os.path.split("{}".format(out_file))[1]
+        dl_mp4(url)
+        dl_audio(url)
+        #mystream = YouTube(url = url)
+        #st.text_input(label="動画タイトル",value=tube_title(url))
+        #mystream_mp4 = mystream.streams.filter(progressive=True, res="720p",file_extension="mp4").get_highest_resolution()
+        #mystream_audio = mystream.streams.filter(type="audio",mime_type="audio/mp4").first()
+        #out_file_mp4 = mystream_mp4.download()
+        #out_file_audio = mystream_audio.download()
+        #out_file_name_mp4 = os.path.split("{}".format(out_file_mp4))[1]
+        #out_file_name_audio = os.path.split("{}".format(out_file_audio))[1]
         #ダウンロードする
-        with open(out_file,"rb") as f:
-    
-            dl_bt = st.download_button(label="動画のダウンロード",data=f,file_name=out_file_name)
+        #with open(out_file_mp4,"rb") as mp4:
+        #    dl_bt_mp4 = st.download_button(label="動画のダウンロード",data=mp4,file_name=out_file_name_mp4)
         
-        os.remove(out_file)
+        #with open(out_file_audio,"rb") as audio:
+        #    dl_bt_audio = st.download_button(label="音声のみダウンロード",data=audio,file_name=out_file_name_audio+"audio")
+        #os.remove(out_file_mp4)
+        #os.remove(out_file_audio)
         
 
     
